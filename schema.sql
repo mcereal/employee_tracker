@@ -13,7 +13,7 @@ CREATE TABLE department (
 CREATE TABLE job_role (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(30) NOT NULL,
-  salary DECIMAL(8) NOT NULL,
+  salary DECIMAL NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -23,5 +23,20 @@ CREATE TABLE employee (
   last_name VARCHAR(30) NOT NULL,
   role_id INT NOT NULL,
   manager_id INT NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+
+  FOREIGN KEY(role_id)
+  REFERENCES job_role(id),
+
+  FOREIGN KEY(manager_id)
+  REFERENCES employee(id)
 );
+
+INSERT INTO department (department_name)
+VALUES ('Sales')
+
+INSERT INTO job_role (title, salary)
+VALUES('Sales person', 60000.00)
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES('michael', 'curtis', 1, 1)
