@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -32,19 +33,19 @@ const start = () => {
       ],
     })
     .then((answer) => {
-      if (answer.postOrBid === "View Departments") {
+      if (answer.mainMenu === "View Departments") {
         getDepartments();
-      } else if (answer.postOrBid === "View Job Roles") {
+      } else if (answer.mainMenu === "View Job Roles") {
         getJobRoles();
-      } else if (answer.postOrBid === "View Employees") {
+      } else if (answer.mainMenu === "View Employees") {
         getEmployees();
-      } else if (answer.postOrBid === "Add A Department") {
+      } else if (answer.mainMenu === "Add A Department") {
         addDepartment();
-      } else if (answer.postOrBid === "Add A Job Role") {
+      } else if (answer.mainMenu === "Add A Job Role") {
         addJobRole();
-      } else if (answer.postOrBid === "Add An Employee") {
+      } else if (answer.mainMenu === "Add An Employee") {
         addEmployee();
-      } else if (answer.postOrBid === "Update Employee Role") {
+      } else if (answer.mainMenu === "Update Employee Role") {
         updateEmployee();
       } else {
         connection.end();
@@ -52,24 +53,17 @@ const start = () => {
     });
 };
 
-const getSongsByArtist = () => {
-  inquirer
-    .prompt([
-      {
-        name: "artistName",
-        type: "input",
-        message: "What is the artist you would like to search for?",
-      },
-    ])
-    .then((answer) => {
-      // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        `SELECT * FROM top5000 WHERE artistName = ${answer}`,
-        (err) => {
-          if (err) throw err;
-          console.log("pelase work!");
-          start();
-        }
-      );
+const getDepartments = () => {
+  const query = "SELECT * FROM department";
+  connection.query(query, function (err, res) {
+    let table = [];
+    res.forEach((department) => {
+      table.push({
+        ID: `${department.id}`,
+        Name: `${department.department_name}`,
+      });
     });
+    console.table(table);
+    start();
+  });
 };
