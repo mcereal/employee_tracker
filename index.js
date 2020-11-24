@@ -67,3 +67,20 @@ const getDepartments = () => {
     start();
   });
 };
+
+const getJobRoles = () => {
+  const query = "SELECT * FROM job_role";
+  connection.query(query, function (err, res) {
+    let table = [];
+    res.forEach((role) => {
+      table.push({
+        ID: `${role.id}`,
+        Title: `${role.title}`,
+        Salary: `${role.salary}`,
+        // Department_ID: `${role.department_id}`,
+      });
+    });
+    console.table(table);
+    start();
+  });
+};
