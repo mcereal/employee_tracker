@@ -17,28 +17,35 @@ connection.connect((err) => {
 const start = () => {
   inquirer
     .prompt({
-      name: "postOrBid",
+      name: "mainMenu",
       type: "list",
-      message: "Select a search option",
+      message: "Please select an option: ",
       choices: [
-        "Search all songs by artist",
-        "Return artists with multiple top 5000 hits",
-        "Search for data in range",
-        "Search for info a songs info",
-        "EXIT",
+        "View Departments",
+        "View Job Roles",
+        "View Employees",
+        "Add A Department",
+        "Add A Job Role",
+        "Add An Employee",
+        "Update Employee Role",
+        "Exit",
       ],
     })
     .then((answer) => {
-      if (answer.postOrBid === "Search all songs by artist") {
-        getSongsByArtist();
-      } else if (
-        answer.postOrBid === "Return artists with multiple top 5000 hits"
-      ) {
-        getMultipleHits();
-      } else if (answer.postOrBid === "Search for data in range") {
-        getDataInRange();
-      } else if (answer.postOrBid === "Search for info a songs info") {
-        getSongInfo();
+      if (answer.postOrBid === "View Departments") {
+        getDepartments();
+      } else if (answer.postOrBid === "View Job Roles") {
+        getJobRoles();
+      } else if (answer.postOrBid === "View Employees") {
+        getEmployees();
+      } else if (answer.postOrBid === "Add A Department") {
+        addDepartment();
+      } else if (answer.postOrBid === "Add A Job Role") {
+        addJobRole();
+      } else if (answer.postOrBid === "Add An Employee") {
+        addEmployee();
+      } else if (answer.postOrBid === "Update Employee Role") {
+        updateEmployee();
       } else {
         connection.end();
       }
