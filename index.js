@@ -144,7 +144,6 @@ const addJobRole = () => {
         (err, res) => {
           if (err) throw err;
           let id = res[0].id;
-          console.log(id);
           connection.query(
             "INSERT INTO job_role SET ?",
             {
@@ -154,10 +153,55 @@ const addJobRole = () => {
             },
             (err, res) => {
               if (err) throw err;
-              console.log(res.affectedRows + " role created!\n");
+              console.log(
+                res.affectedRows + "Job role created successfully!\n"
+              );
               getJobRoles();
             }
           );
+        }
+      );
+    });
+};
+
+const addEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstName",
+        message: "Enter the employee's first name: ",
+      },
+      {
+        type: "input",
+        name: "lastName",
+        message: "Enter the employee's last name: ",
+      },
+      {
+        type: "input",
+        name: "roleID",
+        message: "Enter the employee's role id: ",
+      },
+      {
+        type: "input",
+        name: "managID",
+        message: "Enter the employee's manager's id: ",
+      },
+    ])
+
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: answer.roleID,
+          manager_id: answer.managID,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("Employee added successfully");
+          start();
         }
       );
     });
