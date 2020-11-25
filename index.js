@@ -119,49 +119,46 @@ const addDepartment = () => {
 };
 
 const addJobRole = () => {
-  connection.query(`SELECT * FROM job_role`, (err, res) => {
-    if (err) throw err;
-    inquirer
-      .prompt([
-        {
-          name: "title",
-          type: "input",
-          message: "What is the role title: ",
-        },
-        {
-          name: "salary",
-          type: "input",
-          message: "what is the salary: ",
-        },
-        {
-          name: "departmentName",
-          type: "input",
-          message: "what is the department for this role: ",
-        },
-      ])
+  inquirer
+    .prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "What is the role title: ",
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "what is the salary: ",
+      },
+      {
+        name: "departmentName",
+        type: "input",
+        message: "what is the department for this role: ",
+      },
+    ])
 
-      .then((answer) => {
-        connection.query(
-          `SELECT id FROM department WHERE department_name = ${answer.departmentName}`,
-          function (err, res) {
-            if (err) throw err;
-            return res;
-            connection.end();
-          }
-        );
-        connection.query(
-          "INSERT INTO job_role SET ?",
-          {
-            title: `${answer.title}`,
-            salary: `${answer.salary}`,
-            department_id: `${id}`,
-          },
-          function (err, res) {
-            if (err) throw err;
-            console.log(res.affectedRows + " role created!\n");
-            viewRoles();
-          }
-        );
-      });
-  });
+    .then((answer) => {
+      connection.query(
+        `SELECT id FROM department WHERE department_name = "${answer.departmentName}"`,
+        (err, res) => {
+          if (err) throw err;
+          let id = res[0].id;
+          console.log(id);
+          connection.query(
+            "INSERT INTO job_role SET ?",
+            {
+              title: `${answer.title}`,
+              salary: `${answer.salary}`,
+              department_id: `${id}`,
+            },
+            (err, res) => {
+              if (err) throw err;
+              console.log(res.affectedRows + " role created!\n");
+              getJobRoles();
+            }
+          );
+        }
+      );
+    });
 };
