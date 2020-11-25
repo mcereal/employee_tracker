@@ -119,59 +119,49 @@ const addDepartment = () => {
 };
 
 const addJobRole = () => {
-  inquirer
-    .prompt([
-      {
-        name: "title",
-        type: "input",
-        message: "What is the role title: ",
-      },
-      {
-        name: "salary",
-        type: "input",
-        message: "what is the salary: ",
-      },
-      {
-        name: "departmentName",
-        type: "input",
-        message: "what is the department for this role: ",
-      },
-    ])
-
-    .then((answer) => {
-      connection.query(
-        `SELECT id FROM department WHERE department_name = ${answer.departmentName}`,
-        function (err, res) {
-          if (err) throw err;
-          // Log all results of the SELECT statement
-          return res;
-          connection.end();
-        }
-      );
-      connection.query(
-        "INSERT INTO job_role SET ?",
+  connection.query(`SELECT * FROM job_role`, (err, res) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
         {
-          title: `${answer.title}`,
-          salary: `${answer.salary}`,
-          department_id: `${id}`,
+          name: "title",
+          type: "input",
+          message: "What is the role title: ",
         },
-        function (err, res) {
-          if (err) throw err;
-          console.log(res.affectedRows + " role created!\n");
-          viewRoles();
-        }
-      );
-    });
-};
+        {
+          name: "salary",
+          type: "input",
+          message: "what is the salary: ",
+        },
+        {
+          name: "departmentName",
+          type: "input",
+          message: "what is the department for this role: ",
+        },
+      ])
 
-const getDepartmentId = (input) => {
-  connection.query(
-    `SELECT id FROM department WHERE department_name = ${input}`,
-    function (err, res) {
-      if (err) throw err;
-      // Log all results of the SELECT statement
-      return res;
-      connection.end();
-    }
-  );
+      .then((answer) => {
+        connection.query(
+          `SELECT id FROM department WHERE department_name = ${answer.departmentName}`,
+          function (err, res) {
+            if (err) throw err;
+            return res;
+            connection.end();
+          }
+        );
+        connection.query(
+          "INSERT INTO job_role SET ?",
+          {
+            title: `${answer.title}`,
+            salary: `${answer.salary}`,
+            department_id: `${id}`,
+          },
+          function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " role created!\n");
+            viewRoles();
+          }
+        );
+      });
+  });
 };
