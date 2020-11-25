@@ -32,20 +32,20 @@ const start = () => {
         "Exit",
       ],
     })
-    .then((answer) => {
-      if (answer.mainMenu === "View Departments") {
+    .then((response) => {
+      if (response.mainMenu === "View Departments") {
         getDepartments();
-      } else if (answer.mainMenu === "View Job Roles") {
+      } else if (response.mainMenu === "View Job Roles") {
         getJobRoles();
-      } else if (answer.mainMenu === "View Employees") {
+      } else if (response.mainMenu === "View Employees") {
         getEmployees();
-      } else if (answer.mainMenu === "Add A Department") {
+      } else if (response.mainMenu === "Add A Department") {
         addDepartment();
-      } else if (answer.mainMenu === "Add A Job Role") {
+      } else if (response.mainMenu === "Add A Job Role") {
         addJobRole();
-      } else if (answer.mainMenu === "Add An Employee") {
+      } else if (response.mainMenu === "Add An Employee") {
         addEmployee();
-      } else if (answer.mainMenu === "Update Employee Role") {
+      } else if (response.mainMenu === "Update Employee Role") {
         updateEmployee();
       } else {
         connection.end();
@@ -109,10 +109,10 @@ const addDepartment = () => {
       type: "input",
       message: "What is the department name: ",
     })
-    .then((answer) => {
+    .then((response) => {
       const query = "INSERT INTO department (department_name) VALUES ( ? )";
-      connection.query(query, answer.department, (err, res) =>
-        console.log(`${answer.department.toUpperCase()} added successfully`)
+      connection.query(query, response.department, (err, res) =>
+        console.log(`${response.department.toUpperCase()} added successfully`)
       );
       getDepartments();
     });
@@ -124,12 +124,12 @@ const addJobRole = () => {
       {
         name: "title",
         type: "input",
-        message: "What is the role title: ",
+        message: "What is the job role title: ",
       },
       {
         name: "salary",
         type: "input",
-        message: "what is the salary: ",
+        message: "what is the role's salary: ",
       },
       {
         name: "departmentName",
@@ -138,17 +138,17 @@ const addJobRole = () => {
       },
     ])
 
-    .then((answer) => {
+    .then((response) => {
       connection.query(
-        `SELECT id FROM department WHERE department_name = "${answer.departmentName}"`,
+        `SELECT id FROM department WHERE department_name = "${response.departmentName}"`,
         (err, res) => {
           if (err) throw err;
           let id = res[0].id;
           connection.query(
             "INSERT INTO job_role SET ?",
             {
-              title: `${answer.title}`,
-              salary: `${answer.salary}`,
+              title: `${response.title}`,
+              salary: `${response.salary}`,
               department_id: `${id}`,
             },
             (err, res) => {
@@ -189,18 +189,56 @@ const addEmployee = () => {
       },
     ])
 
-    .then((answer) => {
+    .then((response) => {
       connection.query(
         "INSERT INTO employee SET ?",
         {
-          first_name: answer.firstName,
-          last_name: answer.lastName,
-          role_id: answer.roleID,
-          manager_id: answer.managID,
+          first_name: response.firstName,
+          last_name: response.lastName,
+          role_id: response.roleID,
+          manager_id: response.managID,
         },
         (err) => {
           if (err) throw err;
           console.log("Employee added successfully");
+          start();
+        }
+      );
+    });
+};
+
+const updateEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "idNumber",
+        message: "Enter the employee's id number: ",
+      },
+      {
+        type: "input",
+        name: "roleID",
+        message: "Enter the employees new role id: ",
+      },
+    ])
+
+    .then((response) => {
+      const idNumber = response.idNumber;
+      const roleId = response.roleID;
+
+      connection.query(
+        "UPDATE employee SET ? WHERE ?",
+        [
+          {
+            role_id: roleId,
+          },
+          {
+            id: idNumber,
+          },
+        ],
+        (err) => {
+          if (err) throw err;
+          console.log("Employee name updated successfully");
           start();
         }
       );
